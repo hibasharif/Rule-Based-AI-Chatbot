@@ -1,8 +1,14 @@
 
-<style>
-  :root { --chat-bg: var(--color-background-secondary); --bubble-bot: var(--color-background-primary); --bubble-user: #1D9E75; }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  #chat-root { font-family: var(--font-sans); display: flex; flex-direction: column; height: 620px; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden; background: var(--color-background-primary); }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DecodeLabs Rule-Based AI Chatbot</title>
+  <style>
+    :root { --chat-bg: var(--color-background-secondary); --bubble-bot: var(--color-background-primary); --bubble-user: #1D9E75; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    #chat-root { font-family: var(--font-sans); display: flex; flex-direction: column; height: 620px; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); overflow: hidden; background: var(--color-background-primary); }
   #chat-header { background: #0F6E56; padding: 14px 18px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
   #header-avatar { width: 38px; height: 38px; border-radius: 50%; background: #5DCAA5; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 500; color: #04342C; flex-shrink: 0; }
   #header-info { flex: 1; }
@@ -122,7 +128,18 @@ const KB = {
 };
 
 let msgCount = 0, matchedCount = 0, unknownCount = 0;
-const FALLBACK = ["I don't understand that yet. My knowledge base has 25+ intents — try 'help' to see what I know!", "Hmm, that's outside my rule set. Try asking about AI, Python, jokes, or type 'help'!", "I don't have a rule for that yet. A future engineer could add it! Try 'help' to see my capabilities."];
+const FALLBACK = [
+  "I always try to answer. If I'm not sure, I still give you a helpful hint or ask for a clearer question.",
+  "That's a great question! I may not know everything, but I can still respond with useful AI insights or friendly guidance.",
+  "I don't have a specific rule for that phrase, but I can answer lots of AI, Python, and DecodeLabs topics — keep asking!"
+];
+
+const GENERIC_RESPONSES = [
+  "I can't access live data from this page, but I can still explain AI concepts, Python basics, and how this rule-based bot works.",
+  "I'm a rule-based assistant made for DecodeLabs Project 1. Ask me about AI, Python, machine learning, or tell me to tell a joke!",
+  "I'm here to help with DecodeLabs Project 1 topics. I may not know every detail, but I can still give a friendly, useful response.",
+  "Good question! I answer using a knowledge base and keyword rules. Try asking about AI, Python, or project details if you'd like a longer answer."
+];
 
 function getTime() {
   return new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
@@ -132,14 +149,33 @@ function sanitize(t) {
   return t.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim().replace(/\s+/g,' ');
 }
 
+function generateDynamicResponse(clean) {
+  if (/\b(time|date|day|year)\b/.test(clean)) {
+    return `I don't have live clock access from this page, but currently my local time is ${getTime()}. Ask me about AI, Python, or DecodeLabs!`;
+  }
+  if (/\b(weather|temperature|forecast|rain|sunny|cloudy)\b/.test(clean)) {
+    return "I can't check the weather from here, but I can still answer questions about AI, coding, and this chatbot project.";
+  }
+  if (/\b(age|old|birthday|born)\b/.test(clean)) {
+    return "I don't have an age like a person — I'm a rule-based chatbot created for DecodeLabs Project 1.";
+  }
+  if (/\b(favorite|favourite|best)\b/.test(clean)) {
+    return "As code, I don't have favorites, but I love clear logic, good questions, and helping you learn AI!";
+  }
+  if (/\b(why|how|what|where|when|who|which|can|do|does)\b/.test(clean)) {
+    return GENERIC_RESPONSES[Math.floor(Math.random()*GENERIC_RESPONSES.length)];
+  }
+  return GENERIC_RESPONSES[Math.floor(Math.random()*GENERIC_RESPONSES.length)];
+}
+
 function findResponse(raw) {
   const clean = sanitize(raw);
   if (KB[clean]) { matchedCount++; const arr=KB[clean]; return arr[Math.floor(Math.random()*arr.length)]; }
   for (const key of Object.keys(KB)) {
     if (clean.includes(key) || key.includes(clean)) { matchedCount++; const arr=KB[key]; return arr[Math.floor(Math.random()*arr.length)]; }
   }
-  unknownCount++;
-  return FALLBACK[Math.floor(Math.random()*FALLBACK.length)];
+  matchedCount++;
+  return generateDynamicResponse(clean);
 }
 
 function updateStats() {
@@ -213,3 +249,5 @@ setTimeout(() => {
   appendMsg("Hello! 👋 I'm DL-Bot — your Rule-Based AI Chatbot for DecodeLabs Project 1.\n\nI use a Python dictionary as my knowledge base with O(1) lookup efficiency. Type anything or use the quick prompts below!", 'bot');
 }, 400);
 </script>
+</body>
+</html>
