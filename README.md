@@ -9,7 +9,6 @@
 ---
 
 ## Live Demo 
-https://hibasharif.github.io/Rule-Based-AI-Chatbot/
 
 ## 📌 Overview
 
