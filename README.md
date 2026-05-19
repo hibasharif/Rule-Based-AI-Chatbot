@@ -8,6 +8,9 @@
 
 ---
 
+## Live Demo 
+https://hibasharif.github.io/Rule-Based-AI-Chatbot/
+
 ## 📌 Overview
 
 This is **Project 1** of the DecodeLabs AI Industrial Training Kit — a **Rule-Based AI Chatbot** built from scratch using Python. It demonstrates the foundational concepts of Artificial Intelligence through deterministic, logic-driven programming — before advancing to machine learning or deep learning systems.
